@@ -1,0 +1,528 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <title>二、传统 NLP 快速回顾 · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 5.1.4">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="3.html" />
+    
+    
+    <link rel="prev" href="1.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    PyTorch 自然语言处理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="1.html">
+            
+                <a href="1.html">
+            
+                    
+                    一、基础介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3" data-path="2.html">
+            
+                <a href="2.html">
+            
+                    
+                    二、传统 NLP 快速回顾
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="3.html">
+            
+                <a href="3.html">
+            
+                    
+                    三、神经网络基础组件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="4.html">
+            
+                <a href="4.html">
+            
+                    
+                    四、自然语言处理的前馈网络
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="5.html">
+            
+                <a href="5.html">
+            
+                    
+                    五、嵌入单词和类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="6.html">
+            
+                <a href="6.html">
+            
+                    
+                    六、自然语言处理的序列模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="7.html">
+            
+                <a href="7.html">
+            
+                    
+                    七、自然语言处理的进阶序列模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="8.html">
+            
+                <a href="8.html">
+            
+                    
+                    八、自然语言处理的高级序列模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="9.html">
+            
+                <a href="9.html">
+            
+                    
+                    九、经典, 前沿和后续步骤
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >二、传统 NLP 快速回顾</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="二、传统-nlp-快速回顾">二、传统 NLP 快速回顾</h1>
+<blockquote>
+<p>本文标题：<a href="https://yifdu.github.io/2018/12/18/Natural-Language-Processing-with-PyTorch%EF%BC%88%E4%BA%8C%EF%BC%89/" target="_blank">Natural-Language-Processing-with-PyTorch（二）</a></p>
+<p>文章作者：<a href="https://yifdu.github.io/" title="访问 Yif Du 的个人博客" target="_blank">Yif Du</a></p>
+<p>发布时间：2018 年 12 月 18 日 - 13:12</p>
+<p>最后更新：2019 年 02 月 16 日 - 23:02</p>
+<p>原始链接：<a href="https://yifdu.github.io/2018/12/18/Natural-Language-Processing-with-PyTorch%EF%BC%88%E4%BA%8C%EF%BC%89/" target="_blank">http://yifdu.github.io/2018/12/18/Natural-Language-Processing-with-PyTorch（二）/</a></p>
+<p>许可协议：<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">署名-非商业性使用-禁止演绎 4.0 国际</a>  转载请保留原文链接及作者。</p>
+</blockquote>
+<p>自然语言处理（NLP）和计算语言学（CL）是人类语言计算研究的两个领域。NLP 旨在开发解决涉及语言的实际问题的方法，如信息提取、自动语音识别、机器翻译、情绪分析、问答和总结。另一方面，CL 使用计算方法来理解人类语言的特性。我们如何理解语言?我们如何产生语言?我们如何学习语言?语言之间有什么关系?</p>
+<p>在文献中，我们经常看到方法和研究人员的交叉，从 CL 到 NLP，反之亦然。来自语言学习的课程内容可以用来告知 NLP 中的先验，统计和机器学习的方法可以用来回答 CL 想要回答的问题。事实上，这些问题中的一些已经扩展到它们自己的学科，如音位学、形态学、句法学、语义学和语用学。</p>
+<p>在本书中，我们只关注 NLP，但是我们经常根据需要从 CL 中借鉴思想。在我们将自己完全归属于 NLP 的神经网络方法之前，有必要回顾一下一些传统的 NLP 概念和方法。这就是本章的目标。</p>
+<p>如果你有一些 NLP 的背景，你可以跳过这一章，但你也可以留下来怀旧，为未来建立一个共享的词汇表。</p>
+<h2 id="语料库，标记和类型">语料库，标记和类型</h2>
+<p>所有的 NLP 方法，无论是经典的还是现代的，都以文本数据集开始，也称为语料库（复数:corpora）。语料库通常有原始文本（ASCII 或 UTF-8 格式）和与文本相关的任何元数据。原始文本是字符（字节）序列，但是大多数时候将字符分组成连续的称为标记（Tokens）的连续单元是有用的。在英语中，标记（Tokens）对应由空格字符或标点分隔的单词和数字序列。</p>
+<p>元数据可以是与文本相关联的任何辅助信息，例如标识符，标签和时间戳。 在机器学习术语中，文本及其元数据称为实例或数据点。 语料库（图 2-1）是一组实例，也称为数据集。 鉴于本书重点关注机器学习，我们可以自由地交换术语语料库和数据集。</p>
+<p><img src="img/c35eca55ae92dbc6325e2ba9ac2b7710.jpg" alt="metadata_1"></img></p>
+<p>将文本分解为标记（Tokens）的过程称为分词（tokenization）。世界语的句子，<code>Maria frapis la verda sorĉistino</code>有六个标记。分词可能比简单地基于非字母数字字符拆分文本更加复杂，如图 2-2 所示。对于像土耳其语这样的粘合语言来说，分隔空格和标点符号可能是不够的，因此可能需要更专业的技术。正如您将在第 4 章和第 6 章中看到的，通过将文本表示为字节流，我们可能能够在某些神经网络模型中完全规避分词问题;这对于粘合语言来说变得非常重要。 </p>
+<p><img src="img/2a941f4b722f7fb4031402398e5c0882.jpg" alt="Tokenization"></img></p>
+<p>最后，看看下面这条推文: </p>
+<p><img src="img/3529b4f55a52c83aaf242bd51bf5ca3a.jpg" alt="Tweet"></img></p>
+<p>分词 tweets 涉及到保存话题标签和<code>@handle</code>，将表情符号（如<code>:-)</code>）和 urls 分割为一个单元。<code>#MakeAMovieCold</code>标签应该是 1 个标记还是 4 个?虽然大多数研究论文对这一问题并没有给予太多的关注，而且事实上，许多分词决策往往是任意的，但是这些决策在实践中对准确性的影响要比公认的要大得多。通常被认为是预处理的繁琐工作，大多数开放源码 NLP 包为分词提供了合理的支持。示例 2-1 展示了来自 NLTK 和 SpaCy 的示例，这是两个用于文本处理的常用包。</p>
+<p>示例 2-1：对文本分词</p>
+<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]:
+<span class="hljs-keyword">import</span> spacy
+nlp = spacy.load(<span class="hljs-string">'en'</span>)
+text = <span class="hljs-string">"Mary, don't slap the green witch"</span>
+<span class="hljs-built_in">print</span>([<span class="hljs-built_in">str</span>(token) <span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> nlp(text.lower())])
+Output[<span class="hljs-number">0</span>]:
+[<span class="hljs-string">'mary'</span>, <span class="hljs-string">','</span>, <span class="hljs-string">'do'</span>, <span class="hljs-string">"n't"</span>, <span class="hljs-string">'slap'</span>, <span class="hljs-string">'the'</span>, <span class="hljs-string">'green'</span>, <span class="hljs-string">'witch'</span>, <span class="hljs-string">'.'</span>]
+Input[<span class="hljs-number">1</span>]:
+<span class="hljs-keyword">from</span> nltk.tokenize <span class="hljs-keyword">import</span> TweetTokenizer
+tweet=<span class="hljs-string">u"Snow White and the Seven Degrees
+    #MakeAMovieCold@midnight:-)"</span>
+tokenizer = TweetTokenizer()
+<span class="hljs-built_in">print</span>(tokenizer.tokenize(tweet.lower()))
+Output[<span class="hljs-number">1</span>]:
+[<span class="hljs-string">'snow'</span>, <span class="hljs-string">'white'</span>, <span class="hljs-string">'and'</span>, <span class="hljs-string">'the'</span>, <span class="hljs-string">'seven'</span>, <span class="hljs-string">'degrees'</span>, <span class="hljs-string">'#makeamoviecold'</span>, <span class="hljs-string">'@midnight'</span>, <span class="hljs-string">':-)'</span>]
+</code></pre>
+<p>类型是语料库中唯一的标记。语料库中所有类型的集合就是它的词汇表或词典。词可以区分为内容词和停止词。像冠词和介词这样的限定词主要是为了达到语法目的，就像填充物承载着内容词一样。</p>
+<hr></hr>
+<p>注：这种理解语言的语言学并将其应用于解决自然语言处理问题的过程称为特征工程。为了模型在不同语言之间的方便和可移植性，我们将这一点保持在最低限度。但是在构建和部署真实的生产系统时，特性工程是必不可少的，尽管最近的说法与此相反。对于特征工程的介绍，一般来说，可以阅读 Zheng（2016）的书。</p>
+<hr></hr>
+<h2 id="一元组，二元组，三元组，，n-元组">一元组，二元组，三元组，...，N 元组</h2>
+<p>N 元组是文本中出现的固定长度（<code>n</code>）的连续标记序列。二元组有两个标记，一元组只有一个标记。从文本生成 N 元组非常简单，如示例 2-2 所示，但是 SpaCy 和 NLTK 等包提供了方便的方法。</p>
+<p>示例 2-2：生成 N 元组</p>
+<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]:
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">n_grams</span>(<span class="hljs-params">text, n</span>):
+    <span class="hljs-string">'''
+    takes tokens or text, returns a list of n grams
+    '''</span>
+    <span class="hljs-keyword">return</span> [text[i:i+n] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(text)-n+<span class="hljs-number">1</span>)]
+
+cleaned = [<span class="hljs-string">'mary'</span>, <span class="hljs-string">','</span>, <span class="hljs-string">"n't"</span>, <span class="hljs-string">'slap'</span>, green<span class="hljs-string">', '</span>witch<span class="hljs-string">', '</span>.<span class="hljs-string">']
+print(n_grams(cleaned, 3))
+Output[0]:
+[['</span>mary<span class="hljs-string">', '</span>,<span class="hljs-string">', "n'</span>t<span class="hljs-string">"],
+ [',', "</span>n<span class="hljs-string">'t", '</span>slap<span class="hljs-string">'],
+ ["n'</span>t<span class="hljs-string">", 'slap', 'green'],
+ ['slap', 'green', 'witch'],
+ ['green', 'witch', '.']]
+</span></code></pre>
+<p>对于子词（subword）信息本身携带有用信息的某些情况，可能需要生成字符 N 元组。例如，<code>methanol</code>中的后缀<code>-ol</code>表示它是一种醇;如果您的任务涉及到对有机化合物名称进行分类，那么您可以看到 N 元组捕获的子单词（subword）信息是如何有用的。在这种情况下，您可以重用相同的代码，除了将每个字符 N 元组视为标记。（这里的子单词应该是值类似前缀后缀这种完整单词中的一部分)</p>
+<h2 id="词形和词干">词形和词干</h2>
+<p>词形是单词的词根形式。考虑动词<code>fly</code>。它可以被屈折成许多不同的单词——<code>flow</code>、<code>fly</code>、<code>flies</code>、<code>flying</code>、<code>flow</code>等等——而<code>fly</code>是所有这些看似不同的单词的词形。有时，为了保持向量表示的维数较低，将标记减少到它们的词形可能是有用的。这种简化称为词形还原（lemmatization），您可以在示例 2-3 中看到它的作用。</p>
+<p>示例 2-3：词形还原</p>
+<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<span class="hljs-keyword">import</span> spacy
+nlp = spacy.load(<span class="hljs-string">'en'</span>)
+doc = nlp(<span class="hljs-string">u"he was running late"</span>)
+<span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> doc:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">'{} --&gt; {}'</span>.<span class="hljs-built_in">format</span>(token, token.lemma_))
+Output[<span class="hljs-number">0</span>]
+he --&gt; he
+was --&gt; be
+running --&gt; run
+late --&gt; late
+</code></pre>
+<p>例如，SpaCy 使用一个预定义的字典 WordNet 来提取词形，但是词形还原可以构建为一个机器学习问题，需要理解语言的形态学。</p>
+<p>词干是最普通的词形还原。它涉及到使用手工制定的规则来去掉单词的结尾，从而将它们简化为一种叫做词干的常见形式。通常在开源包中实现的流行的词干分析器是 Porter 词干提取器和 Snowball 词干提取器。我们留给您去寻找合适的 SpaCy/NLTK api 来执行词干提取。</p>
+<h2 id="分类句子和文档">分类句子和文档</h2>
+<p>对文档进行归类或分类可能是 NLP 最早的应用之一。我们在第 1 章中描述的表示（词频（TF）和词频-逆文档频率（TF-idf））对于对较长的文本块（如文档或句子）进行分类和分类非常有用。主题标签的分配、评论情绪的预测、垃圾邮件的过滤、语言识别和邮件分类等问题可以被定义为受监督的文档分类问题。（半监督版本，其中只使用了一个小的标记数据集，非常有用，但超出了本书的范围。)</p>
+<h2 id="分类单词：词性标注">分类单词：词性标注</h2>
+<p>我们可以将标记的概念从文档扩展到单个单词或标记。分类单词的一个常见示例是词性标注，如示例 2-4 所示。 </p>
+<p>示例 2-4：词性</p>
+<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<span class="hljs-keyword">import</span> spacy
+nlp = spacy.load(<span class="hljs-string">'en'</span>)
+doc = nlp(<span class="hljs-string">u"Mary slapped the green witch."</span>)
+<span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> doc:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">'{} - {}'</span>.<span class="hljs-built_in">format</span>(token, token.pos_))
+Output[<span class="hljs-number">0</span>]
+Mary - PROPN
+slapped - VERB
+the - DET
+green - ADJ
+witch - NOUN
+. - PUNCT
+</code></pre>
+<h2 id="分类短语：分块和命名实体识别">分类短语：分块和命名实体识别</h2>
+<p>通常，我们需要标记文本的范围;即，一个连续的多标记边界。例如，<code>Mary slapped the green witch.</code>我们可能需要识别其中的名词短语（NP）和动词短语（VP），如下图所示: </p>
+<p><img src="img/77ada2c4a9a2bcb1ad37475522db4edc.jpg" alt="Sentence_1"></img></p>
+<p>这称为分块（Chunking）或浅解析（Shallow parsing）。浅解析的目的是推导出由名词、动词、形容词等语法原子组成的高阶单位。如果没有训练浅解析模型的数据，可以在词性标记上编写正则表达式来近似浅解析。幸运的是，对于英语和最广泛使用的语言来说，这样的数据和预先训练的模型是存在的。示例 2-5 给出了一个使用 SpaCy 的浅解析示例。</p>
+<p>示例 2-5：名词块</p>
+<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]:
+<span class="hljs-keyword">import</span> spacy
+nlp = spacy.load(<span class="hljs-string">'en'</span>)
+doc  = nlp(<span class="hljs-string">u"Mary slapped the green witch."</span>)
+<span class="hljs-keyword">for</span> chunk <span class="hljs-keyword">in</span> doc.noun_chunks:
+    <span class="hljs-built_in">print</span> <span class="hljs-string">'{} - {}'</span>.<span class="hljs-built_in">format</span>(chunk, chunk.label_)
+Output[<span class="hljs-number">0</span>]:
+Mary - NP
+the green witch - NP
+</code></pre>
+<p>另一种有用的短语类型是命名实体。命名实体是一个字符串，它提到了一个真实世界的概念，如人员、位置、组织、药品名称等等。这里有一个例子: </p>
+<p><img src="img/f01ca7a7f18a64f876482e91e9fcb5e0.jpg" alt="Nameentity"></img></p>
+<h2 id="句子结构">句子结构</h2>
+<p>浅层解析识别短语单位，而识别它们之间关系的任务称为解析（parsing）。您可能还记得，在初级英语课上，用图表表示句子，如图 2-6 所示。 </p>
+<p><img src="img/2f1511a2b2c9bf499667cb6649dbda15.jpg" alt="Parase_1"></img></p>
+<p>解析树（Parse tree）表示句子中不同的语法单元在层次上是如何相关的。图 2-6 中的解析树显示了所谓的成分解析。另一种可能更有用的显示关系的方法是使用依赖项解析（dependency parsing），如图 2-7 所示。 </p>
+<p><img src="img/b4d0b914345a17162773e581f0ee08f9.jpg" alt="Parase_2"></img></p>
+<p>要了解更多关于传统解析的信息，请参阅本章末尾的参考资料部分。</p>
+<h2 id="单词意义和情感">单词意义和情感</h2>
+<p>单词有意义，而且通常不止一个。一个词的不同含义称为它的意义（senses）。WordNet 是一个长期运行的词汇资源项目，它来自普林斯顿大学，旨在对所有英语单词（嗯，大部分）的含义以及其他词汇关系进行分类。例如，考虑像<code>plane</code>这样的单词。图 2-8 显示了<code>plane</code>一词的不同用法。 </p>
+<p><img src="img/f756e802f10adc3bacf2e61e4b5f160e.jpg" alt="Plane"></img></p>
+<p>在 WordNet 这样的项目中数十年的努力是值得的，即使是在有现代方法的情况下。本书后面的章节给出了在神经网络和深度学习方法的背景下使用现有语言资源的例子。词的意义也可以从上下文中归纳出来。从文本中自动发现词义实际上是半监督学习在自然语言处理中的第一个应用。尽管我们在本书中没有涉及到这一点，但我们鼓励您阅读 Jurasky and Martin（2014），第 17 章，Manning and Schutze（1999），第 7 章。</p>
+<h2 id="总结">总结</h2>
+<p>在这一章中，我们回顾了 NLP 中的一些基本术语和思想，这些在以后的章节中会很有用。本章只涉及了传统 NLP 所能提供的部分内容。我们忽略了传统 NLP 的一些重要方面，因为我们想将本书的大部分内容用于 NLP 的深度学习。然而，重要的是要知道，有大量的 NLP 研究工作不使用神经网络，但仍具有很高的影响力（即，广泛用于建筑生产系统）。在许多情况下，基于神经网络的方法应该被看作是传统方法的补充而不是替代。有经验的实践者经常使用这两个世界的优点来构建最先进的系统。为了更多地了解 NLP 的传统方法，我们推荐以下参考资料部分中的标题。</p>
+<h2 id="参考文献">参考文献</h2>
+<ol>
+<li><p><code>Manning, Christopher D., and Hinrich Schütze. (1999). Foundations of statistical natural language processing. MIT press.</code></p>
+</li>
+<li><p><code>Bird, Steven, Ewan Klein, and Edward Loper. (2009). Natural language processing with Python: analyzing text with the natural language toolkit. O'Reilly Media.</code></p>
+</li>
+<li><p><code>Smith, Noah A. (2011). "Linguistic structure prediction." Synthesis lectures on human language technologies.</code></p>
+</li>
+<li><p><code>Jurafsky, Dan, and James H. Martin. (2014). Speech and language processing. Vol. 3. London: Pearson.</code></p>
+</li>
+<li><p><code>Russell, Stuart J., and Peter Norvig. (2016). Artificial intelligence: a modern approach. Malaysia: Pearson Education Limited.</code></p>
+</li>
+<li><p><code>Zheng, Alice, and Casari, Amanda. (2018). Feature Engineering for Machine Learning: Principles and Techniques for Data Scientists. O'Reilly Media, Inc.</code></p>
+</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="1.html" class="navigation navigation-prev " aria-label="Previous page: 一、基础介绍">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="3.html" class="navigation navigation-next " aria-label="Next page: 三、神经网络基础组件">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"二、传统 NLP 快速回顾","level":"1.3","depth":1,"next":{"title":"三、神经网络基础组件","level":"1.4","depth":1,"path":"3.md","ref":"./3.md","articles":[]},"previous":{"title":"一、基础介绍","level":"1.2","depth":1,"path":"1.md","ref":"./1.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"2.md","mtime":"2024-08-23T21:05:48.068Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-24T13:15:24.821Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
