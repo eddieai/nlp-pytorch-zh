@@ -6,7 +6,7 @@
         <title>六、自然语言处理的序列模型 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.1.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -49,7 +49,7 @@
     
     
     <meta name="HandheldFriendly" content="true"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
@@ -288,7 +288,7 @@
 <p>在<code>ElmanRNN</code>中，<code>forward()</code>方法循环遍历输入张量，以计算每个时间步长的隐藏状态向量。注意，有一个用于指定初始隐藏状态的选项，但如果没有提供，则使用所有 0 的默认隐藏状态向量。当<code>ElmanRNN</code>循环遍历输入向量的长度时，它计算一个新的隐藏状态。这些隐藏状态被聚合并最终堆积起来。在返回之前，将再次检查<code>batch_first</code>标志。如果为真，则输出隐藏向量进行排列，以便批量再次位于第 0 维上。</p>
 <p><code>ElmanRNN</code>的输出是一个三维张量——对于批量维度上的每个数据点和每个时间步长，都有一个隐藏状态向量。根据手头的任务，可以以几种不同的方式使用这些隐藏向量。您可以使用它们的一种方法是将每个时间步骤分类为一些离散的选项集。该方法是通过调整 RNN 权值来跟踪每一步预测的相关信息。另外，您可以使用最后一个向量来对整个序列进行分类。这意味着 RNN 权重将被调整以跟踪对最终分类重要的信息。在本章中，我们只看到分类设置，但在接下来的两章中，我们将更深入地讨论逐步预测。</p>
 <p>示例 6-1：使用 PyTorch 的<code>RNNCell</code>的 Elman RNN 的实现示例</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ElmanRNN</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ElmanRNN</span>(nn.Module):
     <span class="hljs-string">""" an Elman RNN built using the RNNCell """</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, input_size, hidden_size, batch_first=<span class="hljs-literal">False</span></span>):
         <span class="hljs-string">"""
@@ -352,7 +352,7 @@
 <p>本例中的数据集是姓氏数据集，前面在第 4 章中介绍过。每个数据点由姓氏和相应的国籍表示。我们将避免重复数据集的细节，但是您应该参考“姓氏数据集”来刷新关于数据集的一些关键点。</p>
 <p>在本例中，就像“使用 CNN 对姓氏进行分类”一样，我们将每个姓氏视为字符序列。与往常一样，我们实现一个数据集类，如示例 6-2 所示，它返回向量化的姓氏和表示其国籍的整数。此外，返回的是序列的长度，它用于下游计算，以知道序列中的最终向量的位置。这是我们熟悉的步骤序列的一部分——实现数据集、向量化器和词汇表——在实际的训练开始之前。</p>
 <p>示例 6-2：为姓氏数据实现数据集</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):        
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):        
 <span class="hljs-meta">    @classmethod</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_dataset_and_make_vectorizer</span>(<span class="hljs-params">cls, surname_csv</span>):
         <span class="hljs-string">"""Load dataset and make a new vectorizer from scratch
@@ -393,7 +393,7 @@
 <p>向量化管道的第一阶段是将姓氏中的每个字符标记映射到唯一的整数。为了实现这一点，我们使用了<code>SequenceVocabulary</code>数据结构，这是我们在“示例:使用预先训练的嵌入进行文档分类的传输学习”中首次介绍和描述的。回想一下，这个数据结构不仅将推文中的单词映射到整数，而且还使用了四个特殊用途的标记:<code>UNK</code>标记、<code>MASK</code>标记、<code>BEGIN-SEQUENCE</code>标记和<code>END-SEQUENCE</code>标记。前两个标记对语言数据至关重要:<code>UNK</code>标记用于输入中看不到的词汇表外标记，而<code>MASK</code>标记允许处理可变长度的输入。第二个标记为模型提供了句子边界特征，并分别作为前缀和追加到序列中。我们请您参阅“示例:使用预先训练的嵌入来进行文档分类的迁移学习”，以获得关于序列表的更长的描述。</p>
 <p>整个向量化过程由<code>SurnameVectorizer</code>管理，它使用序列<code>evocabulary</code>来管理姓氏字符和整数之间的映射。示例 6-3 展示了它的实现，看起来应该非常熟悉。在“示例:使用预训练嵌入进行文档分类的迁移学习”中，我们研究了如何将新闻文章的标题分类到特定的类别中，而向量化管道几乎是相同的。</p>
 <p>示例 6-3：姓氏的向量化器</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>   
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">vectorize</span>(<span class="hljs-params">self, surname, vector_length=-<span class="hljs-number">1</span></span>):
         <span class="hljs-string">"""
@@ -438,7 +438,7 @@
 <p><code>SurnameClassifier</code>模型由嵌入层、<code>ElmanRNN</code>和线性层组成。我们假设模型的输入是在它们被<code>SequenceVocabulary</code>映射到整数之后作为一组整数表示的标记。模型首先使用嵌入层嵌入整数。然后，利用 RNN 计算序列表示向量。这些向量表示姓氏中每个字符的隐藏状态。由于目标是对每个姓氏进行分类，因此提取每个姓氏中最终字符位置对应的向量。考虑这个向量的一种方法是，最后的向量是传递整个序列输入的结果，因此是姓氏的汇总向量。这些汇总向量通过线性层来计算预测向量。预测向量用于训练损失，或者我们可以应用 softmax 函数来创建姓氏的概率分布</p>
 <p>模型的参数是:嵌入的大小，嵌入的数量（即类的数量，以及 RNN 的隐藏状态大小。其中两个参数——嵌入的数量和类的数量——由数据决定。其余的超参数是嵌入的大小和隐藏状态的大小。尽管这些模型可以具有任何价值，但通常最好从一些小的、可以快速训练以验证模型是否有效的东西开始。</p>
 <p>示例 6-4：实现姓氏分类器模型</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameClassifier</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameClassifier</span>(nn.Module):
     <span class="hljs-string">""" An RNN to extract features &amp; a MLP to classify """</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, embedding_size, num_embeddings, num_classes,
                  rnn_hidden_size, batch_first=<span class="hljs-literal">True</span>, padding_idx=<span class="hljs-number">0</span></span>):
@@ -500,7 +500,7 @@
 </code></pre>
 <p>您将注意到，正向函数需要序列的长度。长度用于检索从 RNN 返回的带有名为<code>column_gather</code>函数的张量中每个序列的最终向量，如示例 6-5 所示。该函数迭代批量行索引，并检索位于序列相应长度所指示位置的向量。 </p>
 <p>示例 6-5：使用<code>column_gather</code>在每个序列中获取最终向量</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">column_gather</span>(<span class="hljs-params">y_out, x_lengths</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">column_gather</span>(<span class="hljs-params">y_out, x_lengths</span>):
     <span class="hljs-string">'''Get a specific vector from each batch datapoint in `y_out`.
 
     Args:
@@ -524,7 +524,7 @@
 <h3 id="训练例程和结果">训练例程和结果</h3>
 <p>训练程序遵循标准公式。对于单个批数据，应用模型并计算预测向量。利用横熵损失和地面真值来计算损失值。使用损失值和优化器，计算梯度并使用这些梯度更新模型的权重。对训练数据中的每批重复此操作。对验证数据进行类似的处理，但是将模型设置为<code>eval()</code>模式，以防止在验证数据上反向传播。相反，验证数据仅用于对模型的执行情况给出不那么偏颇的感觉。这个例程在特定的时期重复执行。代码见补充资料我们鼓励您使用超参数来了解影响性能的因素以及影响程度，并将结果制成表格。我们还将为该任务编写合适的基线模型作为练习，让您完成。在“<code>SurnameClassifier</code>模型”中实现的模型是通用的，并不局限于字符。模型中的嵌入层可以映射出离散项序列中的任意离散项;例如，一个句子是一系列的单词。我们鼓励您在其他序列分类任务（如句子分类）中使用示例 6-6 中的代码。 </p>
 <p>示例 6-6：基于 RNN 的姓氏分类器的参数</p>
-<pre><code class="lang-py">args = Namespace(
+<pre><code class="lang-python">args = Namespace(
     <span class="hljs-comment"># Data and path information</span>
     surname_csv=<span class="hljs-string">"data/surnames/surnames_with_splits.csv"</span>,
     vectorizer_file=<span class="hljs-string">"vectorizer.json"</span>,
@@ -587,7 +587,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"六、自然语言处理的序列模型","level":"1.7","depth":1,"next":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"path":"7.md","ref":"./7.md","articles":[]},"previous":{"title":"五、嵌入单词和类型","level":"1.6","depth":1,"path":"5.md","ref":"./5.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"6.md","mtime":"2024-08-23T21:05:48.080Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-24T13:15:24.821Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"六、自然语言处理的序列模型","level":"1.7","depth":1,"next":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"path":"7.md","ref":"./7.md","articles":[]},"previous":{"title":"五、嵌入单词和类型","level":"1.6","depth":1,"path":"5.md","ref":"./5.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"6.md","mtime":"2025-01-05T18:01:41.973Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-01-05T18:01:52.049Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

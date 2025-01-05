@@ -6,7 +6,7 @@
         <title>八、自然语言处理的高级序列模型 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.1.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -49,7 +49,7 @@
     
     
     <meta name="HandheldFriendly" content="true"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
@@ -323,7 +323,7 @@
 <h3 id="nmt-向量化流水线">NMT 向量化流水线</h3>
 <p>对源英语和目标法语句子进行向量化需要比前面章节中看到的更复杂的管道。复杂性增加有两个原因。首先，源序列和目标序列在模型中具有不同的角色，属于不同的语言，并且以两种不同的方式进行向量化。其次，作为使用 PyTorch 的<code>PackedSequences</code>的先决条件，我们按源句的长度对每个小批量进行排序。为了准备这两个复杂性，<code>NMTVectorizer</code>实例化了两个独立的<code>SequenceVocabulary</code>对象和两个最大序列长度的测量，如例 8-1 所示。 </p>
 <p>示例 8-1：构造<code>NMTVectorizer</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, source_vocab, target_vocab, max_source_length,
                  max_target_length</span>):
@@ -370,7 +370,7 @@
                    max_target_length
 </code></pre>
 <p>复杂性的第一个增加是处理源序列和目标序列的不同方式。源序列在开始时插入<code>BEGIN-OF-SEQUENCE</code>进行向量化，并将<code>END-OF-SEQUENCE</code>标记添加到结尾。该模型使用 bi-GRU 为源句子中的每个标记创建摘要向量，并且这些摘要向量极大地受益于具有句子边界的指示。相反，目标序列被向量化为两个副本，偏移一个标记：第一个副本需要<code>BEGIN-OF-SEQUENCE</code>标记，第二个副本需要<code>END-OF-SEQUENCE</code>标记。如果您从第 7 章回忆起来，序列预测任务需要在每个时间步骤观察输入标记和输出标记。 S2S 模型中的解码器正在执行此任务，但增加了编码器上下文的可用性。为了解决这种复杂性，我们制定了核心向量化方法<code>_vectorize</code>，无论它是源索引还是目标索引都无关紧要。然后，编写两个方法来分别处理源索引和目标索引。最后，使用<code>NMTVectorizer.vectorize</code>方法协调这些索引集，该方法是数据集调用的方法。例 8-2 显示了代码。</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">_vectorize</span>(<span class="hljs-params">self, indices, vector_length=-<span class="hljs-number">1</span>, mask_index=<span class="hljs-number">0</span></span>):
         <span class="hljs-string">"""Vectorize the provided indices
@@ -456,7 +456,7 @@
 <p><img src="img/6ed27ac12afc752f06af3ce102e33503.jpg" alt="example5"></img></p>
 <p>创建<code>PackedSequence</code>有两个先决条件：了解每个序列的长度，并按源序列的长度按降序对序列进行排序。为了反映这个新排序的矩阵，小批量中的剩余张量按相同的顺序排序，以便它们与源序列编码保持一致。在例 8-3 中，<code>generate_batches</code>函数被修改为<code>generate_nmt_batches</code>函数。</p>
 <p>示例 8-3：为 NMT 示例生成小批量</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_nmt_batches</span>(<span class="hljs-params">dataset, batch_size, shuffle=<span class="hljs-literal">True</span>,
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_nmt_batches</span>(<span class="hljs-params">dataset, batch_size, shuffle=<span class="hljs-literal">True</span>,
                             drop_last=<span class="hljs-literal">True</span>, device=<span class="hljs-string">"cpu"</span></span>):
     <span class="hljs-string">"""A generator function which wraps the PyTorch DataLoader; NMT Version """</span>
     dataloader = DataLoader(dataset=dataset, batch_size=batch_size,
@@ -474,7 +474,7 @@
 <h3 id="nmt-模型的编码和解码">NMT 模型的编码和解码</h3>
 <p>在这个例子中，我们从源序列开始 - 一个英语句子 - 我们生成一个目标序列 - 相应的法语翻译。标准方法是使用“序列到序列模型，编码器 - 解码器模型和条件生成”中描述的编码器 - 解码器模型。在示例 8-4 和示例 8-5 中呈现的模型中，编码器首先将每个源序列映射到具有 bi-GRU 的向量状态序列（参见“从序列中捕获更多：双向递归模型”）。然后，解码器以解码器的隐藏状态作为其初始隐藏状态开始，并使用注意机制（参见“从序列中捕获更多：注意”）来选择源序列中的不同信息以生成输出序列。在本节的其余部分，我们将更详细地解释此过程。</p>
 <p>示例 8-4：<code>NMTModel</code>在单个前向方法中封装和协调了编码器和解码器</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTModel</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTModel</span>(nn.Module):
     <span class="hljs-string">""" A Neural Machine Translation Model """</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, source_vocab_size, source_embedding_size,
                  target_vocab_size, target_embedding_size, encoding_size,
@@ -518,7 +518,7 @@
 </code></pre>
 <h2 id="编码器">编码器</h2>
 <p>示例 8-5：编码器嵌入了源单词和使用 bi-GPU 提取的特征</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTEncoder</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTEncoder</span>(nn.Module):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, num_embeddings, embedding_size, rnn_hidden_size</span>):
         <span class="hljs-string">"""
         Args:
@@ -567,7 +567,7 @@
 <p>深入了解编码器，我们首先使用嵌入层嵌入输入序列。通常，只需在嵌入层上设置<code>padding_idx</code>标志，我们就可以使模型处理可变长度序列，因为任何等于<code>padding_idx</code>的位置都会被赋予零值向量，该向量在优化期间不会更新。回想一下，这被称为面具。然而，在这种编码器 - 解码器模型中，掩蔽位置需要以不同方式处理，因为我们使用 bi-GRU 来编码源序列。主要原因是后向分量可能受到屏蔽位置的影响，其因子与在序列上开始之前遇到的屏蔽位置的数量成比例。</p>
 <p>为了处理 bi-GRU 中可变长度序列的掩码位置，我们使用 PyTorch 的<code>PackedSequence</code>数据结构。 <code>PackedSequences</code>源自 CUDA 如何允许以批量格式处理可变长度序列。如果满足两个条件，则可以将任何零填充序列（例如示例 8-6 中所示的编码器中的嵌入源序列）转换为<code>PackedSequence</code>：提供每个序列的长度，并根据以下顺序对小批量进行排序。这些序列的长度。这在图 8-11 中以可视方式显示，因为它是一个复杂的主题，我们在例 8-6 及其输出中再次演示它.</p>
 <p>示例 8-6：<code>packed_padded_sequences</code>和<code>pad_packed_sequences</code>的简单演示</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 abcd_padded = torch.tensor([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>], dtype=torch.float32)
 efg_padded = torch.tensor([<span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">0</span>], dtype=torch.float32)
 h_padded = torch.tensor([<span class="hljs-number">8</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>], dtype=torch.float32)
@@ -610,7 +610,7 @@ tensor([ <span class="hljs-number">4</span>,  <span class="hljs-number">3</span>
 </code></pre>
 <p>我们在生成每个小批量时处理排序，如上一节所述。然后，如例 8-7 所示，通过传递嵌入的序列，序列的长度和表示第一个维度是批量维度的布尔标志来激发 PyTorch 的<code>pack_padded_sequence</code>函数。此函数的输出是<code>PackedSequence</code>。将得到的<code>PackedSequence</code>输入到 bi-GRU 中以为下游解码器创建状态向量。使用另一个布尔标志将 bi-GRU 的输出解压缩为完整张量，指示批量在第一维上。解包操作，如图 8-11 所示，将每个屏蔽位置 15 设置为零值向量，保留下游计算的完整性。</p>
 <p>示例 8-7：NMT 解码器从编码的源句子中构造目标句子</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTDecoder</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTDecoder</span>(nn.Module):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, num_embeddings, embedding_size, rnn_hidden_size, bos_index</span>):
         <span class="hljs-string">"""
         Args:
@@ -708,7 +708,7 @@ tensor([ <span class="hljs-number">4</span>,  <span class="hljs-number">3</span>
 <p>了解注意机制在此示例中的工作方式非常重要。回想一下前面的部分，可以使用查询，键和值来描述注意机制。分数函数将查询向量和关键向量作为输入，以计算在值向量中选择的一组权重。在这个例子中，我们使用点积评分函数，但它不是唯一的.在这个例子中，解码器的隐藏状态被用作查询向量，编码器状态向量集是关键和值向量。</p>
 <p>解码器隐藏状态与编码器状态中的向量的点积为编码序列中的每个项创建标量。在使用 softmax 函数时，这些标量变为编码器状态中的向量的概率分布。这些概率用于在将编码器状态向量加在一起之前对其进行加权，以产生每个批次项目的单个向量。总而言之，允许解码器隐藏状态在每个时间步骤优先加权编码器状态。这就像一个聚光灯，使模型能够学习如何突出显示生成输出序列所需的信息。我们在例 8-8 中演示了这种版本的注意机制。第一个尝试详细说明操作。此外，它使用视图操作插入大小为 1 的维度，以便可以针对另一个张量广播张量。在<code>terse_attention</code>版本中，视图操作被更常用的练习替换，取消压缩。此外，不是将元素和求和相乘，而是使用更有效的<code>matmul</code>运算。</p>
 <p>示例 8-8：注意力更加显式地执行逐元素乘法和求和</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">verbose_attention</span>(<span class="hljs-params">encoder_state_vectors, query_vector</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">verbose_attention</span>(<span class="hljs-params">encoder_state_vectors, query_vector</span>):
     <span class="hljs-string">"""
     encoder_state_vectors: 3dim tensor from bi-GRU in encoder
     query_vector: hidden state in decoder GRU
@@ -741,7 +741,7 @@ tensor([ <span class="hljs-number">4</span>,  <span class="hljs-number">3</span>
 <p>当前编写的方式，模型假定提供了目标序列，并将在解码器的每个时间步骤用作输入。在测试时，违反了这个假设，因为模型不能作弊并且知道它试图生成的序列。为了适应这一事实，一种技术是允许模型在训练期间使用自己的预测。这是一种在文献中探索为“学习搜索”和“预定抽样”的技术.理解这种技术的一种直观方法是将预测问题视为搜索问题。在每个时间步，模型有许多路径可供选择（选择的数量是目标词汇的大小），数据是正确路径的观察。在测试时，模型最终被允许“离开路径”，因为没有提供正确的路径，它应该从中计算概率分布。因此，让模型采样自己的路径的技术提供了一种方法，在该方法中，当模型偏离数据集中的目标序列时，可以优化模型以获得更好的概率分布。</p>
 <p>代码有三个主要修改，以使模型在训练期间采样自己的预测。首先，初始索引更明确地作为<code>BEGIN-OF-SEQUENCE</code>标记索引。其次，为生成循环中的每个步骤绘制随机样本，如果随机样本小于样本概率，则在该迭代期间使用模型的预测。最后，第三个实际采样本身在条件<code>if</code>下使用<code>use_sample</code>。在示例 8-9 中，注释行显示了如何使用最大预测，而未注释行显示了如何以与其概率成比例的速率实际采样索引。</p>
 <p>示例 8-9：在前向过程中构建的带有采样过程的解码器（粗体）</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTDecoder</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">NMTDecoder</span>(nn.Module):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, num_embeddings, embedding_size, rnn_size, bos_index</span>):
         <span class="hljs-built_in">super</span>(NMTDecoder, <span class="hljs-variable language_">self</span>).__init__()
         <span class="hljs-comment"># ... other init code here ...</span>
@@ -869,7 +869,7 @@ tensor([ <span class="hljs-number">4</span>,  <span class="hljs-number">3</span>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"八、自然语言处理的高级序列模型","level":"1.9","depth":1,"next":{"title":"九、经典, 前沿和后续步骤","level":"1.10","depth":1,"path":"9.md","ref":"./9.md","articles":[]},"previous":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"path":"7.md","ref":"./7.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"8.md","mtime":"2024-08-23T21:05:48.083Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-24T13:15:24.821Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"八、自然语言处理的高级序列模型","level":"1.9","depth":1,"next":{"title":"九、经典, 前沿和后续步骤","level":"1.10","depth":1,"path":"9.md","ref":"./9.md","articles":[]},"previous":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"path":"7.md","ref":"./7.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"8.md","mtime":"2025-01-05T18:01:41.963Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-01-05T18:01:52.049Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

@@ -38,7 +38,7 @@
 
 ### Docker
 
-```
+```python
 docker pull apachecn0/nlp-pytorch-zh
 docker run -tid -p <port>:80 apachecn0/nlp-pytorch-zh
 # 访问 http://localhost:{port} 查看文档
@@ -46,7 +46,7 @@ docker run -tid -p <port>:80 apachecn0/nlp-pytorch-zh
 
 ### PYPI
 
-```
+```python
 pip install nlp-pytorch-zh
 nlp-pytorch-zh <port>
 # 访问 http://localhost:{port} 查看文档
@@ -54,7 +54,7 @@ nlp-pytorch-zh <port>
 
 ### NPM
 
-```
+```python
 npm install -g nlp-pytorch-zh
 nlp-pytorch-zh <port>
 # 访问 http://localhost:{port} 查看文档

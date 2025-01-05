@@ -6,7 +6,7 @@
         <title>四、自然语言处理的前馈网络 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.1.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -49,7 +49,7 @@
     
     
     <meta name="HandheldFriendly" content="true"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
@@ -292,7 +292,7 @@
 <h3 id="在-pytorch-中实现-mlp">在 PyTorch 中实现 MLP</h3>
 <p>在上一节中，我们概述了 MLP 的核心思想。在本节中，我们将介绍 PyTorch 中的一个实现。如前所述，MLP 除了第 3 章中简单的感知器之外，还有一个额外的计算层。在我们在例 4-1 中给出的实现中，我们用 PyTorch 的两个线性模块实例化了这个想法。线性对象被命名为<code>fc1</code>和<code>fc2</code>，它们遵循一个通用约定，即将线性模块称为“完全连接层”，简称为“fc 层”。除了这两个线性层外，还有一个修正的线性单元（ReLU）非线性（在第 3 章“激活函数”一节中介绍），它在被输入到第二个线性层之前应用于第一个线性层的输出。由于层的顺序性，您必须确保层中的输出数量等于下一层的输入数量。使用两个线性层之间的非线性是必要的，因为没有它，两个线性层在数学上等价于一个线性层 4，因此不能建模复杂的模式。MLP 的实现只实现反向传播的前向传递。这是因为 PyTorch 根据模型的定义和向前传递的实现，自动计算出如何进行向后传递和梯度更新。</p>
 <p>示例 4-1：多层感知机</p>
-<pre><code class="lang-py"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<pre><code class="lang-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
 <span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">MultilayerPerceptron</span>(nn.Module):
@@ -327,7 +327,7 @@
 </code></pre>
 <p>在例 4-2 中，我们实例化了 MLP。由于 MLP 实现的通用性，我们可以为任何大小的输入建模。为了演示，我们使用大小为 3 的输入维度、大小为 4 的输出维度和大小为 100 的隐藏维度。请注意，在<code>print</code>语句的输出中，每个层中的单元数很好地排列在一起，以便为维度 3 的输入生成维度 4 的输出。</p>
 <p>示例 4-2：NLP 的示例实例化</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 batch_size = <span class="hljs-number">2</span> <span class="hljs-comment"># number of samples input at once</span>
 input_dim = <span class="hljs-number">3</span>
 hidden_dim = <span class="hljs-number">100</span>
@@ -345,7 +345,7 @@ MultilayerPerceptron(
 </code></pre>
 <p>我们可以通过传递一些随机输入来快速测试模型的“连接”，如示例 4-3 所示。因为模型还没有经过训练，所以输出是随机的。在花费时间训练模型之前，这样做是一个有用的完整性检查。请注意 PyTorch 的交互性是如何让我们在开发过程中实时完成所有这些工作的，这与使用 NumPy 或 panda 没有太大区别:</p>
 <p>示例 4-3：使用随机输入测试 MLP</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">describe</span>(<span class="hljs-params">x</span>):
     <span class="hljs-built_in">print</span>(<span class="hljs-string">"Type: {}"</span>.<span class="hljs-built_in">format</span>(x.<span class="hljs-built_in">type</span>()))
     <span class="hljs-built_in">print</span>(<span class="hljs-string">"Shape/size: {}"</span>.<span class="hljs-built_in">format</span>(x.shape))
@@ -372,7 +372,7 @@ tensor([[-<span class="hljs-number">0.2456</span>,  <span class="hljs-number">0.
 <p>学习如何读取 PyTorch 模型的输入和输出非常重要。在前面的例子中，MLP 模型的输出是一个有两行四列的张量。这个张量中的行与批量维数对应，批量维数是小批量中的数据点的数量。列是每个数据点的最终特征向量。在某些情况下，例如在分类设置中，特征向量是一个预测向量。名称为“预测向量”表示它对应于一个概率分布。预测向量会发生什么取决于我们当前是在进行训练还是在执行推理。在训练期间，输出按原样使用，带有一个损失函数和目标类标签的表示。我们将在“示例:带有多层感知器的姓氏分类”中对此进行深入介绍。</p>
 <p>但是，如果您想将预测向量转换为概率，则需要额外的步骤。具体来说，您需要 softmax 函数，它用于将一个值向量转换为概率。softmax 有许多根。在物理学中，它被称为玻尔兹曼或吉布斯分布;在统计学中，它是多项式逻辑回归;在自然语言处理（NLP）社区，它是最大熵（MaxEnt）分类器。不管叫什么名字，这个函数背后的直觉是，大的正值会导致更高的概率，小的负值会导致更小的概率。在示例 4-3 中，<code>apply_softmax</code>参数应用了这个额外的步骤。在例 4-4 中，您可以看到相同的输出，但是这次将<code>apply_softmax</code>标志设置为<code>True</code>:</p>
 <p>示例 4-4：带有<code>apply_softmax=True</code>的 MLP</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 y_output = mlp(x_input, apply_softmax=<span class="hljs-literal">True</span>)
 describe(y_output)
 Output[<span class="hljs-number">0</span>]
@@ -393,7 +393,7 @@ tensor([[ <span class="hljs-number">0.2087</span>,  <span class="hljs-number">0.
 <p>为了创建最终的数据集，我们从一个比本书补充材料中包含的版本处理更少的版本开始，并执行了几个数据集修改操作。第一个目的是减少这种不平衡——原始数据集中 70% 以上是俄文，这可能是由于抽样偏差或俄文姓氏的增多。为此，我们通过选择标记为俄语的姓氏的随机子集对这个过度代表的类进行子样本。接下来，我们根据国籍对数据集进行分组，并将数据集分为三个部分:70% 到训练数据集，15% 到验证数据集，最后 15% 到测试数据集，以便跨这些部分的类标签分布具有可比性。</p>
 <p><code>SurnameDataset</code>的实现与“示例：餐馆评论的情感分类”中的<code>ReviewDataset</code>几乎相同，只是在<code>__getitem__</code>方法的实现方式上略有不同。回想一下，本书中呈现的数据集类继承自 PyTorch 的数据集类，因此，我们需要实现两个函数:<code>__getitem__</code>方法，它在给定索引时返回一个数据点;以及<code>__len__</code>方法，该方法返回数据集的长度。“示例:餐厅评论的情绪分类”中的示例与本示例的区别在<code>__getitem__</code>中，如示例 4-5 所示。它不像“示例:将餐馆评论的情绪分类”那样返回一个向量化的评论，而是返回一个向量化的姓氏和与其国籍相对应的索引:</p>
 <p>示例 4-5：实现<code>SurnameDataset.__getitem__()</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
     <span class="hljs-comment"># Implementation is nearly identical to Section 3.5</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, index</span>):
@@ -414,7 +414,7 @@ tensor([[ <span class="hljs-number">0.2087</span>,  <span class="hljs-number">0.
 <p>虽然词汇表将单个标记（字符）转换为整数，但<code>SurnameVectorizer</code>负责应用词汇表并将姓氏转换为向量。实例化和使用非常类似于“示例:对餐馆评论的情绪进行分类”中的<code>ReviewVectorizer</code>，但有一个关键区别:字符串没有在空格上分割。姓氏是字符的序列，每个字符在我们的词汇表中是一个单独的标记。然而，在“卷积神经网络”出现之前，我们将忽略序列信息，通过迭代字符串输入中的每个字符来创建输入的收缩单热向量表示。我们为以前未遇到的字符指定一个特殊的标记，即<code>UNK</code>。由于我们仅从训练数据实例化词汇表，而且验证或测试数据中可能有惟一的字符，所以在字符词汇表中仍然使用<code>UNK</code>符号。</p>
 <p>您应该注意，虽然我们在这个示例中使用了收缩的单热，但是在后面的章节中，您将了解其他向量化方法，它们是单热编码的替代方法，有时甚至更好。具体来说，在“示例:使用 CNN 对姓氏进行分类”中，您将看到一个热门矩阵，其中每个字符都是矩阵中的一个位置，并具有自己的热门向量。然后，在第 5 章中，您将学习嵌入层，返回整数向量的向量化，以及如何使用它们创建密集向量矩阵。但是现在，让我们看一下示例 4-6 中<code>SurnameVectorizer</code>的代码。</p>
 <p>示例 4-6：实现<code>SurnameVectorizer</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, surname_vocab, nationality_vocab</span>):
         <span class="hljs-variable language_">self</span>.surname_vocab = surname_vocab
@@ -457,7 +457,7 @@ tensor([[ <span class="hljs-number">0.2087</span>,  <span class="hljs-number">0.
 <p><code>SurnameClassifier</code>是本章前面介绍的 MLP 的实现（示例 4-7）。第一个线性层将输入向量映射到中间向量，并对该向量应用非线性。第二线性层将中间向量映射到预测向量。</p>
 <p>在最后一步中，可选地应用 softmax 操作，以确保输出和为 1;这就是所谓的“概率”。它是可选的原因与我们使用的损失函数的数学公式有关——交叉熵损失。我们研究了“损失函数”中的交叉熵损失。回想一下，交叉熵损失对于多类分类是最理想的，但是在训练过程中软最大值的计算不仅浪费而且在很多情况下并不稳定。</p>
 <p>示例 4-7：作为 MLP 的<code>SurnameClassifier</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<pre><code class="lang-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
 <span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameClassifier</span>(nn.Module):
@@ -495,7 +495,7 @@ tensor([[ <span class="hljs-number">0.2087</span>,  <span class="hljs-number">0.
 <h3 id="训练例程">训练例程</h3>
 <p>虽然我们使用了不同的模型、数据集和损失函数，但是训练例程是相同的。因此，在例 4-8 中，我们只展示了<code>args</code>以及本例中的训练例程与“示例:餐厅评论情绪分类”中的示例之间的主要区别。</p>
 <p>示例 4-8：用于使用 MLP 分类姓氏的参数</p>
-<pre><code class="lang-py">args = Namespace(
+<pre><code class="lang-python">args = Namespace(
     <span class="hljs-comment"># Data and path information</span>
     surname_csv=<span class="hljs-string">"data/surnames/surnames_with_splits.csv"</span>,
     vectorizer_file=<span class="hljs-string">"vectorizer.json"</span>,
@@ -515,7 +515,7 @@ tensor([[ <span class="hljs-number">0.2087</span>,  <span class="hljs-number">0.
 <p>训练中最显著的差异与模型中输出的种类和使用的损失函数有关。在这个例子中，输出是一个多类预测向量，可以转换为概率。正如在模型描述中所描述的，这种输出的损失类型仅限于<code>CrossEntropyLoss</code>和<code>NLLLoss</code>。由于它的简化，我们使用了<code>CrossEntropyLoss</code>。</p>
 <p>在例 4-9 中，我们展示了数据集、模型、损失函数和优化器的实例化。这些实例应该看起来与“示例:将餐馆评论的情绪分类”中的实例几乎相同。事实上，在本书后面的章节中，这种模式将对每个示例进行重复。</p>
 <p>示例 4-9：实例化数据集，模型，损失和优化器</p>
-<pre><code class="lang-py">dataset = SurnameDataset.load_dataset_and_make_vectorizer(args.surname_csv)
+<pre><code class="lang-python">dataset = SurnameDataset.load_dataset_and_make_vectorizer(args.surname_csv)
 vectorizer = dataset.get_vectorizer()
 
 classifier = SurnameClassifier(input_dim=<span class="hljs-built_in">len</span>(vectorizer.surname_vocab),
@@ -530,7 +530,7 @@ optimizer = optim.Adam(classifier.parameters(), lr=args.learning_rate)
 <h2 id="训练循环">训练循环</h2>
 <p>与“示例：餐馆评论的情感分类”中的训练循环相比，本例的训练循环除了变量名以外几乎是相同的。具体来说，示例 4-10 显示了使用不同的键从<code>batch_dict</code>中获取数据。除了外观上的差异，训练循环的功能保持不变。利用训练数据，计算模型输出、损失和梯度。然后，使用梯度来更新模型。</p>
 <p>示例 4-10：训练循环的代码段</p>
-<pre><code class="lang-py"><span class="hljs-comment"># the training routine is these 5 steps:</span>
+<pre><code class="lang-python"><span class="hljs-comment"># the training routine is these 5 steps:</span>
 
 <span class="hljs-comment"># --------------------------------------</span>
 <span class="hljs-comment"># step 1\. zero the gradients</span>
@@ -558,7 +558,7 @@ optimizer.step()
 <p>CLASSIFYING A NEW SURNAME</p>
 <p>示例 4-11 显示了分类新姓氏的代码。给定一个姓氏作为字符串，该函数将首先应用向量化过程，然后获得模型预测。注意，我们包含了<code>apply_softmax</code>标志，所以结果包含概率。模型预测，在多项式的情况下，是类概率的列表。我们使用 PyTorch 张量最大函数来得到由最高预测概率表示的最优类。</p>
 <p>示例 4-11：执行国籍预测的函数</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_nationality</span>(<span class="hljs-params">name, classifier, vectorizer</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_nationality</span>(<span class="hljs-params">name, classifier, vectorizer</span>):
     vectorized_name = vectorizer.vectorize(name)
     vectorized_name = torch.tensor(vectorized_name).view(<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>)
     result = classifier(vectorized_name, apply_softmax=<span class="hljs-literal">True</span>)
@@ -576,7 +576,7 @@ optimizer.step()
 <p>RETRIEVING THE TOP-K PREDICTIONS FOR A NEW SURNAME </p>
 <p>不仅要看最好的预测，还要看更多的预测。例如，NLP 中的标准实践是采用<code>k</code>个最佳预测并使用另一个模型对它们重新排序。PyTorch 提供了一个<code>torch.topk</code>函数，它提供了一种方便的方法来获得这些预测，如示例 4-12 所示。</p>
 <p>示例 4-12：预测前<code>k</code>个国籍</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_topk_nationality</span>(<span class="hljs-params">name, classifier, vectorizer, k=<span class="hljs-number">5</span></span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_topk_nationality</span>(<span class="hljs-params">name, classifier, vectorizer, k=<span class="hljs-number">5</span></span>):
     vectorized_name = vectorizer.vectorize(name)
     vectorized_name = torch.tensor(vectorized_name).view(<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>)
     prediction_vector = classifier(vectorized_name, apply_softmax=<span class="hljs-literal">True</span>)
@@ -599,7 +599,7 @@ optimizer.step()
 <p>DROPOUT</p>
 <p>简单地说，在训练过程中，丢弃有一定概率使属于两个相邻层的单元之间的连接减弱。这有什么用呢?我们从斯蒂芬•梅里蒂（Stephen Merity）的一段直观（且幽默）的解释开始: “丢弃，简单地说，是指如果你能在喝醉的时候反复学习如何做一件事，那么你应该能够在清醒的时候做得更好。这一见解产生了许多最先进的结果和一个新兴的领域。” 神经网络——尤其是具有大量分层的深层网络——可以在单元之间创建有趣的相互适应。“共同适应”（Coadaptation）是神经科学中的一个术语，但在这里它只是指一种情况，即两个单元之间的联系变得过于紧密，而牺牲了其他单元之间的联系。这通常会导致模型与数据过拟合。通过概率地丢弃单元之间的连接，我们可以确保没有一个单元总是依赖于另一个单元，从而产生健壮的模型。丢弃不会向模型中添加额外的参数，但是需要一个超参数——“丢弃概率”。丢弃概率，正如你可能已经猜到的，是单位之间的连接被丢弃的概率。通常将下降概率设置为 0.5。例 4-13 给出了一个带丢弃的 MLP 的重新实现。 </p>
 <p>示例 4-13：带有丢弃的 MLP</p>
-<pre><code class="lang-py"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<pre><code class="lang-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
 <span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">MultilayerPerceptron</span>(nn.Module):
@@ -661,7 +661,7 @@ optimizer.step()
 <p>本节中的实现遍历设计决策，以构建一个特征向量。我们首先构造一个人工数据张量，以反映实际数据的形状。数据张量的大小是三维的——这是向量化文本数据的最小批大小。如果你对一个字符序列中的每个字符使用单热向量，那么单热向量序列就是一个矩阵，而单热矩阵的小批量就是一个三维张量。使用卷积的术语，每个单热向量（通常是词汇表的大小）的大小是输入通道的数量，字符序列的长度是宽度。</p>
 <p>在例 4-14 中，构造特征向量的第一步是将 PyTorch 的<code>Conv1d</code>类的一个实例应用到三维数据张量。通过检查输出的大小，你可以知道张量减少了多少。我们建议您参考图 4-9 来直观地解释为什么输出张量在收缩。</p>
 <p>示例 4-14：人造数据和使用<code>Conv1d</code>类</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 batch_size = <span class="hljs-number">2</span>
 one_hot_size = <span class="hljs-number">10</span>
 sequence_width = <span class="hljs-number">7</span>
@@ -677,7 +677,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 </code></pre>
 <p>进一步减小输出张量的主要方法有三种。第一种方法是创建额外的卷积并按顺序应用它们。最终，对应的<code>sequence_width</code>（<code>dim=2</code>）维度的大小将为 1。我们在例 4-15 中展示了应用两个额外卷积的结果。一般来说，对输出张量的约简应用卷积的过程是迭代的，需要一些猜测工作。我们的示例是这样构造的:经过三次卷积之后，最终的输出在最终维度上的大小为 1。</p>
 <p>示例 4-15：卷积在数据上的迭代应用</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 conv2 = nn.Conv1d(in_channels=<span class="hljs-number">16</span>, out_channels=<span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>)
 conv3 = nn.Conv1d(in_channels=<span class="hljs-number">32</span>, out_channels=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>)
 
@@ -698,7 +698,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">64</sp
 <p>在每次卷积中，通道维数的大小都会增加，因为通道维数是每个数据点的特征向量。张量实际上是一个特征向量的最后一步是去掉讨厌的尺寸为 1 维。您可以使用<code>squeeze()</code>方法来实现这一点。该方法将删除<code>size=1</code>的所有维度并返回结果。然后，得到的特征向量可以与其他神经网络组件（如线性层）一起使用来计算预测向量。</p>
 <p>另外还有两种方法可以将张量简化为每个数据点的一个特征向量:将剩余的值压平为特征向量，并在额外维度上求平均值。这两种方法如示例 4-16 所示。使用第一种方法，只需使用 PyTorch 的<code>view()</code>方法将所有向量平展成单个向量。第二种方法使用一些数学运算来总结向量中的信息。最常见的操作是算术平均值，但沿特征映射维数求和和使用最大值也是常见的。每种方法都有其优点和缺点。扁平化保留了所有的信息，但会导致比预期（或计算上可行）更大的特征向量。平均变得与额外维度的大小无关，但可能会丢失信息。</p>
 <p>示例 4-16：用于归约到特征向量的两个相加方法</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 <span class="hljs-comment"># Method 2 of reducing to feature vectors</span>
 <span class="hljs-built_in">print</span>(intermediate1.view(batch_size, -<span class="hljs-number">1</span>).size())
 
@@ -717,7 +717,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <p>虽然姓氏数据集之前在“示例:带有多层感知器的姓氏分类”中进行了描述，但是我们建议您参考“姓氏数据集”来了解它的描述。尽管我们使用了来自“示例:带有多层感知器的姓氏分类”中的相同数据集，但在实现上有一个不同之处:数据集由单热向量矩阵组成，而不是一个收缩的单热向量。为此，我们实现了一个数据集类，它跟踪最长的姓氏，并将其作为矩阵中包含的行数提供给向量化器。列的数量是单热向量的大小（词汇表的大小）。示例 4-17 显示了对<code>SurnameDataset.__getitem__</code>的更改;我们显示对<code>SurnameVectorizer</code>的更改。在下一小节向量化。</p>
 <p>我们使用数据集中最长的姓氏来控制单热矩阵的大小有两个原因。首先，将每一小批姓氏矩阵组合成一个三维张量，要求它们的大小相同。其次，使用数据集中最长的姓氏意味着可以以相同的方式处理每个小批量。</p>
 <p>示例 4-17：为传递最大姓氏长度而修改的<code>SurnameDataset</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
     <span class="hljs-comment"># ... existing implementation from Section 4.2</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, index</span>):
@@ -736,7 +736,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <p>在本例中，尽管词汇表和<code>DataLoader</code>的实现方式与“示例:带有多层感知器的姓氏分类”中的示例相同，但<code>Vectorizer</code>的<code>vectorize()</code>方法已经更改，以适应 CNN 模型的需要。具体来说，正如我们在示例 4-18 中的代码中所示，该函数将字符串中的每个字符映射到一个整数，然后使用该整数构造一个由单热向量组成的矩阵。重要的是，矩阵中的每一列都是不同的单热向量。主要原因是，我们将使用的<code>Conv1d</code>层要求数据张量在第 0 维上具有批量，在第 1 维上具有通道，在第 2 维上具有特性。</p>
 <p>除了更改为使用单热矩阵之外，我们还修改了向量化器，以便计算姓氏的最大长度并将其保存为<code>max_surname_length</code></p>
 <p>示例 4-18：为 CNN 实现姓氏向量化器</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">vectorize</span>(<span class="hljs-params">self, surname</span>):
         <span class="hljs-string">"""
@@ -781,7 +781,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <p>然而，本例中的新内容是使用<code>sequence</code>和 ELU PyTorch 模块。序列模块是封装线性操作序列的方便包装器。在这种情况下，我们使用它来封装<code>Conv1d</code>序列的应用程序。ELU 是类似于第 3 章中介绍的 ReLU 的非线性函数，但是它不是将值裁剪到 0 以下，而是对它们求幂。ELU 已经被证明是卷积层之间使用的一种很有前途的非线性（Clevert et al.， 2015）。</p>
 <p>在本例中，我们将每个卷积的通道数与<code>num_channels</code>超参数绑定。我们可以选择不同数量的通道分别进行卷积运算。这样做需要优化更多的超参数。我们发现 256 足够大，可以使模型达到合理的性能。</p>
 <p>示例 4-19：基于 CNN 的<code>SurnameClassifier</code></p>
-<pre><code class="lang-py"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<pre><code class="lang-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
 <span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameClassifier</span>(nn.Module):
@@ -833,7 +833,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <h3 id="训练例程">训练例程</h3>
 <p>训练程序包括以下似曾相识的的操作序列:实例化数据集,实例化模型,实例化损失函数,实例化优化器,遍历数据集的训练分区和更新模型参数,遍历数据集的验证分区和测量性能,然后重复数据集迭代一定次数。此时，这是本书到目前为止的第三个训练例程实现，应该将这个操作序列内部化。对于这个例子，我们将不再详细描述具体的训练例程，因为它与“示例:带有多层感知器的姓氏分类”中的例程完全相同。但是，输入参数是不同的，您可以在示例 4-20 中看到。</p>
 <p>示例 4-20：CNN 姓氏分类器的输入参数</p>
-<pre><code class="lang-py">args = Namespace(
+<pre><code class="lang-python">args = Namespace(
     <span class="hljs-comment"># Data and Path information</span>
     surname_csv=<span class="hljs-string">"data/surnames/surnames_with_splits.csv"</span>,
     vectorizer_file=<span class="hljs-string">"vectorizer.json"</span>,
@@ -859,7 +859,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <h2 id="为新的姓氏分类或获取最佳预测">为新的姓氏分类或获取最佳预测</h2>
 <p>在本例中，<code>predict_nationality()</code>函数的一部分发生了更改，如示例 4-21 所示:我们没有使用视图方法重塑新创建的数据张量以添加批量维度，而是使用 PyTorch 的<code>unsqueeze()</code>函数在批量应该在的位置添加大小为 1 的维度。相同的更改反映在<code>predict_topk_nationality()</code>函数中。</p>
 <p>示例 4-21：使用训练过的模型做出预测</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_nationality</span>(<span class="hljs-params">surname, classifier, vectorizer</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_nationality</span>(<span class="hljs-params">surname, classifier, vectorizer</span>):
     <span class="hljs-string">"""Predict the nationality from a new surname
 
     Args:
@@ -888,7 +888,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
 <h3 id="批量规范化（batchnorm">批量规范化（BatchNorm)</h3>
 <p>批量标准化是设计网络时经常使用的一种工具。BatchNorm 对 CNN 的输出进行转换，方法是将激活量缩放为零均值和单位方差。它用于 Z 转换的平均值和方差值每批更新一次，这样任何单个批中的波动都不会太大地移动或影响它。BatchNorm 允许模型对参数的初始化不那么敏感，并且简化了学习速率的调整（Ioffe and Szegedy, 2015）。在 PyTorch 中，批量规范是在<code>nn</code>模块中定义的。例 4-22 展示了如何用卷积和线性层实例化和使用批量规范。</p>
 <p>示例 4-22：使用<code>Conv1D</code>层和批量规范化</p>
-<pre><code class="lang-py"><span class="hljs-comment"># ...</span>
+<pre><code class="lang-python"><span class="hljs-comment"># ...</span>
         <span class="hljs-variable language_">self</span>.conv1 = nn.Conv1d(in_channels=<span class="hljs-number">1</span>, out_channels=<span class="hljs-number">10</span>,
                                kernel_size=<span class="hljs-number">5</span>,
                                stride=<span class="hljs-number">1</span>)
@@ -950,7 +950,7 @@ torch.Size([<span class="hljs-number">2</span>, <span class="hljs-number">16</sp
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"四、自然语言处理的前馈网络","level":"1.5","depth":1,"next":{"title":"五、嵌入单词和类型","level":"1.6","depth":1,"path":"5.md","ref":"./5.md","articles":[]},"previous":{"title":"三、神经网络基础组件","level":"1.4","depth":1,"path":"3.md","ref":"./3.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"4.md","mtime":"2024-08-23T21:05:48.073Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-24T13:15:24.821Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"四、自然语言处理的前馈网络","level":"1.5","depth":1,"next":{"title":"五、嵌入单词和类型","level":"1.6","depth":1,"path":"5.md","ref":"./5.md","articles":[]},"previous":{"title":"三、神经网络基础组件","level":"1.4","depth":1,"path":"3.md","ref":"./3.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"4.md","mtime":"2025-01-05T18:01:41.963Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-01-05T18:01:52.049Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

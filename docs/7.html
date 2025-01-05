@@ -6,7 +6,7 @@
         <title>七、自然语言处理的进阶序列模型 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.1.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -49,7 +49,7 @@
     
     
     <meta name="HandheldFriendly" content="true"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
@@ -296,7 +296,7 @@
 <p>姓氏数据集是姓氏及其来源国的集合，最早出现在“带有多层感知器的姓氏分类”中。到目前为止，该数据集已经被用于一个分类任务——给出一个新的姓氏，正确地将姓氏来自哪个国家。然而，在本例中，我们将展示如何使用数据集来训练一个模型，该模型可以为字符序列分配概率并生成新的序列。</p>
 <p><code>SurnamesDataset</code>类与前几章基本相同:我们使用 panda <code>DataFrame</code>加载数据集，并构造了一个向量化器，它将标记封装为模型和手边任务所需的整数映射。为了适应任务的不同，修改了<code>SurnamesDataset.__getitem__()</code>方法，以输出预测目标的整数序列，如示例 7-1 所示。该方法引用向量器来计算作为输入的整数序列（<code>from_vector</code>）和作为输出（<code>to_vector</code>）的整数序列。下一小节将描述向量化的实现。 </p>
 <p>示例 7-1：用于序列预测任务的<code>SurnamesDataset.__getitem__</code>方法</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
 <span class="hljs-meta">    @classmethod</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_dataset_and_make_vectorizer</span>(<span class="hljs-params">cls, surname_csv</span>):
         <span class="hljs-string">"""Load dataset and make a new vectorizer from scratch
@@ -337,7 +337,7 @@
 <p>为了将其转化为序列预测问题，使用<code>SequenceVocabulary</code>将每个标记映射到其适当的索引。然后，序列的起始标记索引<code>begin_seq_index</code>位于序列的开头，而序列的结束标记索引<code>end_seq_index</code>位于序列的末尾。此时，每个数据点都是一系列索引，具有相同的第一个和最后一个索引。要创建训练例程所需的输入和输出序列，我们只需使用索引序列的两个切片:第一个切片包含除最后一个之外的所有标记索引，第二个切片包含除第一个之外的所有标记索引。当排列和配对在一起时，序列就是正确的输入-输出索引。</p>
 <p>为了更明确，我们展示了<code>SurnameVectorizer</code>的代码。在示例 7-2 中向量化。第一步是将姓氏（字符串）映射到索引（表示这些字符的整数列表）。然后，用序列索引的开始和结束来包装索引:具体来说，<code>begin_seq_index</code>在索引之前，<code>end_seq_index</code>在索引之后。接下来，我们测试<code>vector_length</code>，它通常在运行时提供，但是代码的编写允许向量的任何长度。在训练期间，提供<code>vector_length</code>是很重要的，因为小批是由堆叠的向量表示构造的。如果向量的长度不同，它们不能堆放在一个矩阵中。在测试<code>vector_length</code>之后，创建两个向量:<code>from_vector</code>和<code>to_vector</code>。不包含最后一个索引的索引片放在<code>from_vector</code>中，不包含第一个索引的索引片放在<code>to_vector</code>中。每个向量的剩余位置都填充了<code>mask_index</code>。将序列填充（或填充）到右边是很重要的，因为空位置将改变输出向量，我们希望这些变化发生在序列被看到之后。</p>
 <p>示例 7-2：序列预测任务中的<code>SurnameVectorizer.vectorize</code>代码区</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameVectorizer</span>(<span class="hljs-title class_ inherited__">object</span>):
     <span class="hljs-string">""" The Vectorizer which coordinates the Vocabularies and puts them to use"""</span>    
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">vectorize</span>(<span class="hljs-params">self, surname, vector_length=-<span class="hljs-number">1</span></span>):
         <span class="hljs-string">"""Vectorize a surname into a vector of observations and targets
@@ -394,7 +394,7 @@
 <p>第一个模型是无条件的:它在生成姓氏之前不观察国籍。在实践中，非条件意味着 GRU 的计算不偏向任何国籍。在下一个例子（例子 7-3）中，通过初始隐藏向量引入计算偏差。在这个例子中，我们使用一个全为 0 的向量，这样初始的隐藏状态向量就不会影响计算。 通常，<code>SurnameGenerationModel</code>嵌入字符索引，使用 GRU 计算其顺序状态，并使用线性层计算标记预测的概率。更明确地说，非条件<code>SurnameGenerationModel</code>从初始化嵌入层、GRU 和线性层开始。 与第 6 章的序列模型相似，该模型输入了一个整数矩阵。我们使用一个 PyTorch 嵌入实例<code>char_embed</code>将整数转换为一个三维张量（每个批量项的向量序列）。这个张量传递给 GRU, GRU 计算每个序列中每个位置的状态向量。</p>
 <p>第六章的序列分类与本章序列预测的主要区别在于如何处理由 RNN 计算出的状态向量。在第 6 章中，我们为每个批量索引检索一个向量，并使用这些向量执行预测。在这个例子中，我们将我们的三维张量重塑为一个二维张量（一个矩阵），以便行维表示每个样本（批量和序列索引）。利用这个矩阵和线性层，我们计算每个样本的预测向量。我们通过将矩阵重新构造成一个三维张量来完成计算。由于排序信息是通过整形操作保存的，所以每个批和序列索引仍然处于相同的位置。我们需要整形的原因是因为线性层需要一个矩阵作为输入。</p>
 <p>示例 7-3：非条件化的姓氏生成模型</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameGenerationModel</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameGenerationModel</span>(nn.Module):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, char_embedding_size, char_vocab_size, rnn_hidden_size,
                  batch_first=<span class="hljs-literal">True</span>, padding_idx=<span class="hljs-number">0</span>, dropout_p=<span class="hljs-number">0.5</span></span>):
         <span class="hljs-string">"""
@@ -453,7 +453,7 @@
 <p>第二个模型考虑了要生成的姓氏的国籍。在实践中，这意味着有某种机制允许模型对特定姓氏的行为进行偏差。在本例中，我们通过将每个国籍嵌入为隐藏状态大小的向量来参数化 RNNs 的初始隐藏状态。这意味着模型在调整模型参数的同时，也调整了嵌入矩阵中的值，从而使预测偏于对特定的国籍和姓氏的规律性更加敏感。例如，爱尔兰国籍向量偏向于起始序列<code>Mc</code>和<code>O</code>。</p>
 <p>例 7-3 显示了条件模型之间的差异。具体地说，引入额外的嵌入来将国籍索引映射到与 RNN 的隐藏层相同大小的向量。然后，在正向函数中嵌入民族指标，作为 RNN 的初始隐含层简单传入。虽然这是对第一个模型的一个非常简单的修改，但是它对于让 RNN 根据生成的国籍改变其行为有着深远的影响。 </p>
 <p>示例 7-4：条件化的姓氏生成模型</p>
-<pre><code class="lang-py"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameGenerationModel</span>(nn.Module):
+<pre><code class="lang-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SurnameGenerationModel</span>(nn.Module):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, char_embedding_size, char_vocab_size, num_nationalities,
                  rnn_hidden_size, batch_first=<span class="hljs-literal">True</span>, padding_idx=<span class="hljs-number">0</span>, dropout_p=<span class="hljs-number">0.5</span></span>):
         <span class="hljs-comment"># ...</span>
@@ -472,7 +472,7 @@
 <p>在本例中，我们介绍了用于生成姓氏的字符序列预测任务。虽然许多实现细节和训练例程与第 6 章的序列分类示例相似，但有几个主要区别。在这一节中，我们将重点讨论差异、使用的超参数和结果。 与前面的例子相比，计算这个例子中的损失需要两个更改，因为我们在序列中的每一步都要进行预测。首先，我们将三维张量重塑为二维张量（矩阵）以满足计算约束。其次，我们协调掩蔽索引，它允许可变长度序列与损失函数，使损失不使用掩蔽位置在其计算。</p>
 <p>我们通过使用示例 7-5 中所示的代码片段来处理这两个问题——三维张量和可变长度序列。首先，预测和目标被标准化为损失函数期望的大小（预测是二维的，目标是一维的）。现在，每一行代表一个示例:按顺序执行一个时间步骤。然后，交叉熵损失用于<code>ignore_index</code>设置为<code>mask_index</code>。这将导致损失函数忽略与<code>ignore_index</code>匹配的目标中的任何位置。</p>
 <p>示例 7-5：处理三维张量和序列级损失计算</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">normalize_sizes</span>(<span class="hljs-params">y_pred, y_true</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">normalize_sizes</span>(<span class="hljs-params">y_pred, y_true</span>):
     <span class="hljs-string">"""Normalize tensor sizes
 
     Args:
@@ -494,7 +494,7 @@
 <p>使用这种修正的损失计算，我们构造了一个训练例程，看起来与本书中的每个例子相似。它首先迭代训练数据集，每次只处理一小批数据。对于每个小批量，模型的输出是由输入计算出来的。因为我们在每一个时间步上执行预测，所以模型的输出是一个三维张量。使用前面描述的<code>sequence_loss</code>和优化器，可以计算模型预测的错误信号，并用于更新模型参数。</p>
 <p>大多数模型超参数是由字符词汇表的大小决定的。这个大小是可以观察到的作为模型输入的离散标记的数量，以及每次步骤输出分类中的类的数量。剩下的模型超参数是字符嵌入的大小和内部 RNN 隐藏状态的大小。示例 7-6 给出了这些超参数和训练选项。</p>
 <p>示例 7-6：姓氏生成的超参数</p>
-<pre><code class="lang-py">args = Namespace(
+<pre><code class="lang-python">args = Namespace(
     <span class="hljs-comment"># Data and Path information</span>
     surname_csv=<span class="hljs-string">"data/surnames/surnames_with_splits.csv"</span>,
     vectorizer_file=<span class="hljs-string">"vectorizer.json"</span>,
@@ -515,7 +515,7 @@
 </code></pre>
 <p>尽管预测的每个字符的准确性是模型性能的度量，但是在本例中，通过检查模型将生成的姓氏类型来进行定性评估会更好。为此，我们在<code>forward()</code>方法中步骤的修改版本上编写一个新的循环，以计算每个时间步骤的预测，并将这些预测用作下一个时间步骤的输入。我们将展示示例 7-7 中的代码。模型在每个时间步上的输出是一个预测向量，利用 softmax 函数将预测向量转换为概率分布。利用概率分布，我们利用火炬。多项式抽样函数，它以与索引的概率成比例的速率选择索引。抽样是一个每次产生不同输出的随机过程。 </p>
 <p>示例 7-7：从非条件化生成模型采样</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sample_from_model</span>(<span class="hljs-params">model, vectorizer, num_samples=<span class="hljs-number">1</span>, sample_size=<span class="hljs-number">20</span>,
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sample_from_model</span>(<span class="hljs-params">model, vectorizer, num_samples=<span class="hljs-number">1</span>, sample_size=<span class="hljs-number">20</span>,
                       temperature=<span class="hljs-number">1.0</span></span>):
     <span class="hljs-string">"""Sample a sequence of indices from the model
 
@@ -551,7 +551,7 @@
 </code></pre>
 <p>您需要将采样的索引从<code>sample_from_model()</code>函数转换为用于人类可读输出的字符串。如示例 7-8 所示，要做到这一点，需要使用用于向量化姓氏的<code>SequenceVocabulary</code>。在创建字符串时，只使用序列结束索引之前的索引。这是假设模型能够了解姓氏应该在何时结束。</p>
 <p>示例 7-8：将采样的索引映射为姓氏字符串</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">decode_samples</span>(<span class="hljs-params">sampled_indices, vectorizer</span>):
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">decode_samples</span>(<span class="hljs-params">sampled_indices, vectorizer</span>):
     <span class="hljs-string">"""Transform indices into the string form of a surname
 
     Args:
@@ -576,7 +576,7 @@
 </code></pre>
 <p>使用这些函数，您可以检查模型的输出，如示例 7-9 所示，以了解模型是否正在学习生成合理的姓氏。从检查输出中我们可以学到什么?我们可以看到，尽管这些姓氏似乎遵循着几种形态模式，但这些姓氏显然并不是来自一个国家或另一个国家。一种可能是，学习姓氏的一般模型会混淆不同民族之间的性格分布。有条件的姓氏生成模型就是用来处理这种情况的。 </p>
 <p>示例 7-9：从非条件化模型采样</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 samples = sample_from_model(unconditioned_model, vectorizer,
                             num_samples=<span class="hljs-number">10</span>)
 decode_samples(samples, vectorizer)
@@ -594,7 +594,7 @@ Output[<span class="hljs-number">0</span>]
 </code></pre>
 <p>对于有条件的<code>SurnameGenerationModel</code>，我们修改<code>sample_from_model()</code>函数来接受国籍索引列表，而不是指定数量的样本。在例 7-10 中，修改后的函数使用带有国籍嵌入的国籍索引来构造 GRU 的初始隐藏状态。在此之后，采样过程与非条件模型完全相同。 </p>
 <p>示例 7-10：从序列模型采样</p>
-<pre><code class="lang-py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sample_from_model</span>(<span class="hljs-params">model, vectorizer, nationalities, sample_size=<span class="hljs-number">20</span>,
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sample_from_model</span>(<span class="hljs-params">model, vectorizer, nationalities, sample_size=<span class="hljs-number">20</span>,
                       temperature=<span class="hljs-number">1.0</span></span>):
     <span class="hljs-string">"""Sample a sequence of indices from the model
 
@@ -633,7 +633,7 @@ Output[<span class="hljs-number">0</span>]
 </code></pre>
 <p>用条件向量采样的有效性意味着我们对生成输出有影响。在示例 7-11 中，我们迭代国籍索引并从每个索引中取样。为了节省空间，我们只显示一些输出。从这些输出中，我们可以看到，该模型确实采用了姓氏拼写的一些模式。 </p>
 <p>示例 7-11：从条件<code>SurnameGenerationModel</code>采样（没有展示所有输出）</p>
-<pre><code class="lang-py">Input[<span class="hljs-number">0</span>]
+<pre><code class="lang-python">Input[<span class="hljs-number">0</span>]
 <span class="hljs-keyword">for</span> index <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(vectorizer.nationality_vocab)):
     nationality = vectorizer.nationality_vocab.lookup_index(index)
 
@@ -676,7 +676,7 @@ Sampled for Vietnamese:
 <h2 id="训练序列模型的提示和技巧">训练序列模型的提示和技巧</h2>
 <p>序列模型很难训练，而且在这个过程中会出现许多问题。在这里，我们总结了一些技巧和技巧，我们发现不仅在我们的工作中有用，而且也被其他人在文献报道。 1）如果可能，使用门控变量 门控体系结构通过解决非通配型的许多数值稳定性问题简化了训练。 2）如果可能，请选择 GRUs 而不是 LSTMs GRUs 提供了与 LSTMs 几乎相同的性能，并且使用更少的参数和计算。幸运的是，从 PyTorch 的角度来看，除了简单地使用不同的模块类之外，在 LSTM 上使用 GRU 没有什么可做的。 3）使用 Adam 作为您的优化器 在第 6 章、第 7 章和第 8 章中，我们只使用 Adam 作为优化器，这是有充分理由的:它是可靠的，收敛速度更快。对于序列模型尤其如此。如果由于某些原因，您的模型没有与 Adam 收敛，那么在这种情况下，切换到随机梯度下降可能会有所帮助。 4）梯度剪裁 如果您注意到在应用这些章节中学习到的概念时出现了数字错误，请在训练过程中使用您的代码绘制梯度值。知道愤怒之后，剪掉任何异常值。这将确保更顺利的训练。在 PyTorch 中，有一个有用的实用程序<code>clip_grad_norm</code>可以为您完成此工作，如示例 7-12 所示。一般来说，你应该养成剪切渐变的习惯。 </p>
 <p>示例 7-12：在 PyTorch 中应用梯度剪裁</p>
-<pre><code class="lang-py"><span class="hljs-comment"># define your sequence model</span>
+<pre><code class="lang-python"><span class="hljs-comment"># define your sequence model</span>
 model = ..
 <span class="hljs-comment"># define loss function</span>
 loss_function = ..
@@ -736,7 +736,7 @@ loss_function = ..
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"next":{"title":"八、自然语言处理的高级序列模型","level":"1.9","depth":1,"path":"8.md","ref":"./8.md","articles":[]},"previous":{"title":"六、自然语言处理的序列模型","level":"1.7","depth":1,"path":"6.md","ref":"./6.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"7.md","mtime":"2024-08-23T21:05:48.081Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-24T13:15:24.821Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"七、自然语言处理的进阶序列模型","level":"1.8","depth":1,"next":{"title":"八、自然语言处理的高级序列模型","level":"1.9","depth":1,"path":"8.md","ref":"./8.md","articles":[]},"previous":{"title":"六、自然语言处理的序列模型","level":"1.7","depth":1,"path":"6.md","ref":"./6.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"7.md","mtime":"2025-01-05T18:01:41.963Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-01-05T18:01:52.049Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
